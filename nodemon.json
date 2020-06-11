@@ -1,0 +1,6 @@
+{
+    "env": {
+        "MONGO_ATLAS_DB": "dees-cluster",
+        "MONGO_ATLAS_PW": "dees-cluster"
+    }
+}
