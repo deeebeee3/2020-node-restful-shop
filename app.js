@@ -7,10 +7,23 @@ const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 
 app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    //The BROWSER needs these, POSTMAN doesn't care
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
+    //IF PREFLIGHT CHECK - tell THE BROWSER what methods are allowed and return 
+    if(req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+        return res.status(200).json({});
+    }
+
+    //if not PREFLIGHT set the response headers and continue to next middlewares
+    next();
+});
 
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
