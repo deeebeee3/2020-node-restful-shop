@@ -30,14 +30,15 @@ router.post('/', async (req, res, next) => {
         const result = await product.save();
 
         console.log(result);
+        res.status(201).json({
+            message: 'Product created',
+            createdProduct: JSON.stringify(result)
+        });
+
     }catch(err){
         console.log(err)
+        res.status(500).json({ err });
     }
-
-    res.status(201).json({
-        message: 'Handling POST requests to /products',
-        createdProduct: product
-    });
 });
 
 router.get('/:productId', async (req, res, next) => {
