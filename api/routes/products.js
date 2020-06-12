@@ -45,6 +45,7 @@ router.post('/', async (req, res, next) => {
 
     try{
         //save method provided by mongoose, which we can use on mongoose models
+        //don't need to chain on exec - as save() returns a real promise by default
         const result = await product.save();
 
         res.status(201).json({
@@ -132,8 +133,9 @@ router.delete('/:productId', async (req, res, next) => {
         const deleted = await Product.remove({ _id: id }).exec();
 
         console.log(deleted);
+        
         res.status(200).json({ 
-            message: `${JSON.stringify(deleted)} successfully deleted`,
+            message: `${JSON.stringify(deleted)} successfully deleted Product`,
             request: {
                 type: 'POST',
                 url: 'http://localhost:3000/products',
