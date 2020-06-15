@@ -1,14 +1,33 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const multer = require('multer');
 const Product = require('../models/product');
 
+const storage = multer.diskStorage({ 
+    destination: (req, file, cb) => { cb(null, './uploads/') },
+    filename: (req, file, cb) => { cb(null, new Date().toISOString() + file.originalname) }
+});
+
+const fileFilter = (req, file, cb) => {
+    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+        cb(null, true);
+    }else{
+        cb(new Error('Only jpegs and pngs accepted.'), false);
+    }
+}
+
+const upload = multer({ 
+    storage: storage, 
+    limits: { fileSize: 1024 * 1024 * 5 },
+    fileFilter: fileFilter 
+});
 
 router.get('/', async(req, res, next) => {
     try {
         const results = await Product
             .find()
-            .select('name price _id')
+            .select('name price _id productImage')
             .exec();
 
         const response = {
@@ -17,6 +36,7 @@ router.get('/', async(req, res, next) => {
                 return {
                     name: result.name,
                     price: result.price,
+                    productImage: `http://localhost:3000/${result.productImage}`,
                     _id: result._id, 
                     request: {
                         type: 'GET',
@@ -34,13 +54,14 @@ router.get('/', async(req, res, next) => {
     }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', upload.single('productImage'), async (req, res, next) => {
     //product object created with help of mongoose
     //special object we can call methods on
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
-        price: req.body.price
+        price: req.body.price,
+        productImage: req.file.path
     });
 
     try{
@@ -53,7 +74,7 @@ router.post('/', async (req, res, next) => {
             createdProduct: {
                 name: result.name,
                 price: result.price,
-                nam_ide: result._id,
+                _ide: result._id,
                 request: {
                     type: 'GET',
                     url: `http://localhost:3000/products/${result._id}`
@@ -75,7 +96,7 @@ router.get('/:productId', async (req, res, next) => {
         //exec() - returns a true promise - available on most mongoose async methods - see api
         const product = await Product
             .findById(id)
-            .select('name price _id')
+            .select('name price _id productImage')
             .exec();
 
         if(product){
