@@ -10,6 +10,7 @@ router.get('/', async (req, res, next) => {
         const results = await Order
             .find()
             .select('product quantity _id')
+            .populate('product', 'name') //product comes from order model's property
             .exec();
 
         res.status(201).json({
@@ -76,6 +77,7 @@ router.get('/:orderId', async (req, res, next) => {
         const order = await Order
             .findById(req.params.orderId)
             .select('product quantity _id')
+            .populate('product')
             .exec();
 
         if(order){
