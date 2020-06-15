@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
+const userRoutes = require('./api/routes/user');
 
 mongoose.connect(
     `mongodb+srv://dees-cluster:${process.env.MONGO_ATLAS_PW}@dees-cluster.wqnun.mongodb.net/${process.env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`,
@@ -37,6 +38,7 @@ app.use((req, res, next) => {
 
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
+app.use('/user', userRoutes);
 
 //if we reach this line and make it past the above 2 middlewares - 
 //no routes in the previous two middle wares were able to handle the request
