@@ -51,8 +51,19 @@ router.post('/signup', async (req, res, next) => {
     }
 });
 
-router.post('/signup', async(req, res, next) => {
-    
+router.delete('/:userId', async (req, res, next) => {
+    try {
+        const deleted = User.deleteOne({ _id: req.params.userId }).exec();
+
+        res.status(200).json({
+            message: 'User Deleted'
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    }
 });
 
 module.exports = router;
