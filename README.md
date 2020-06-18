@@ -12,3 +12,7 @@ paste:
 	"productId": "8374837483",
 	"quantity": "10"
 }
+
+
+Get decode value of json web token (it's not encrypted, just encoded):
+https://jwt.io/
