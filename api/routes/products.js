@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth');
 const Product = require('../models/product');
 
 const storage = multer.diskStorage({ 
@@ -54,7 +55,7 @@ router.get('/', async(req, res, next) => {
     }
 });
 
-router.post('/', upload.single('productImage'), async (req, res, next) => {
+router.post('/', checkAuth, upload.single('productImage'), async (req, res, next) => {
     //product object created with help of mongoose
     //special object we can call methods on
     const product = new Product({
@@ -118,7 +119,7 @@ router.get('/:productId', async (req, res, next) => {
     }
 });
 
-router.patch('/:productId', async (req, res, next) => {
+router.patch('/:productId', checkAuth, async (req, res, next) => {
     try {
         const id = req.params.productId;
 
@@ -148,7 +149,7 @@ router.patch('/:productId', async (req, res, next) => {
     }
 });
 
-router.delete('/:productId', async (req, res, next) => {
+router.delete('/:productId', checkAuth, async (req, res, next) => {
     try {
         const id = req.params.productId;
         const deleted = await Product.remove({ _id: id }).exec();

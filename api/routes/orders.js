@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const checkAuth = require('../middleware/check-auth');
 
 const Order = require('../models/order');
 const Product = require('../models/product');
 
-router.get('/', async (req, res, next) => {
+router.get('/', checkAuth, async (req, res, next) => {
     try {
         const results = await Order
             .find()
@@ -35,7 +36,7 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', checkAuth, async (req, res, next) => {
         try{
             const productExists = await Product.findById(req.body.productId).exec();
 
@@ -72,7 +73,7 @@ router.post('/', async (req, res, next) => {
 
 });
 
-router.get('/:orderId', async (req, res, next) => {
+router.get('/:orderId', checkAuth, async (req, res, next) => {
     try{
         const order = await Order
             .findById(req.params.orderId)
@@ -99,7 +100,7 @@ router.get('/:orderId', async (req, res, next) => {
     }
 });
 
-router.delete('/:orderId', async (req, res, next) => {
+router.delete('/:orderId', checkAuth, async (req, res, next) => {
     try {
         const id = req.params.orderId;
         const deleted = await Order.remove({ _id: id }).exec();

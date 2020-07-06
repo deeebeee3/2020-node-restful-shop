@@ -54,15 +54,15 @@ router.post('/signup', async (req, res, next) => {
 
 router.post('/login', async (req, res, next) => {
     try {
-        const user = await User.find({ email: req.body.email }).exec();
+        const users = await User.find({ email: req.body.email }).exec();
 
-        if(user.length < 1){
+        if(users.length < 1){
             return res.status(401).json({
                  message: 'Auth failed'
             });
         }
 
-        bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+        bcrypt.compare(req.body.password, users[0].password, (err, result) => {
             if(err){
                 return res.status(401).json({
                     message: 'Auth failed'
@@ -70,10 +70,9 @@ router.post('/login', async (req, res, next) => {
             }
 
             if(result){
-
                 const token = jwt.sign({
-                    email: user[0].email,
-                    userId: user[0]._id
+                    email: users[0].email,
+                    userId: users[0]._id
                 }, 
                 process.env.JWT_KEY, 
                 {
